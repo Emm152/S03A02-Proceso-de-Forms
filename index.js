@@ -147,28 +147,21 @@ case "/message":
     }));
 		// Se registra una manejador de eventos
 		// para el termino de recepción de datos
-    req.on("end", () => {
+    req.on("end", async () => {
       // Procesa el formulario
-      res.statusCode = 200;
-      res.setHeader("Content-Type", "text/html");
+      
 			// Mediante URLSearchParams se extraen
 			// los campos del formulario
       const params = new URLSearchParams(body);
 			// Se construye un objeto a partir de los datos
 			// en la variable params
       const parsedParams = Object.fromEntries(params);
-      res.write(`
-      <html>
-        <head>
-          <link rel="icon" type="image/x-icon" sizes="32x32" href="https://img.icons8.com/avantgarde/100/null/message-bot.png">
-          <title>My App</title>
-        </head>
-        <body>
-          <h1 style="color: #333">SERVER MESSAGE RECIEVED &#128172</h1>
-          <p>${parsedParams.message}</p>
-        </body>
-      </html>
-      `);
+      // Almacenar el mensaje en un archivo
+      fs.writeFile('message.txt',parsedParams.message);
+      // Establecer codigo de respuesta para redirecciónamiento (302)
+      res.statusCode = 302;
+      // Estableciendo el redireccionamiento
+      res.setHeader('Location' , '/');
 			// Se termina la conexion
       return res.end();
     })
